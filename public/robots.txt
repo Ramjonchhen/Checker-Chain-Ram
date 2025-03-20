@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://checkerchain.com
+
+# Sitemaps
+Sitemap: https://checkerchain.com/sitemap.xml

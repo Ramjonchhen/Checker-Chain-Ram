@@ -1,0 +1,265 @@
+import { Product } from "stores/product";
+
+const carouselDummyData: Product[] = [
+    {
+        "currentReviewCycle": 0,
+        "location": "",
+        "openTime": "",
+        "closeTime": "",
+        "specialReviewRequest": "",
+        "discountCode": "",
+        "offer": "",
+        "_id": "63b46c81a8f56797b21a96ad",
+        "name": "CheckerChain",
+        "category": {
+            _id: "1",
+            name: "Crypo & Blockchain"
+        },
+        "description": "A web3 review to earn system that powers up a decentralized review aggregator platform.",
+        "url": "www.checkerchain.com",
+        "subcategories": [
+            "Business",
+            "Utility",
+            "Productivity",
+            "Software",
+            "Finance",
+            "Blockchain"
+        ],
+        "slug": "checkerchain",
+        "gallery": [],
+        "teams": [],
+        "isClaimed": true,
+        "isClaiming": false,
+        "network": "elrond",
+        "createdBy": {
+            "_id": "63b467ea858f6508ed89fcc0",
+            "wallet": "erd1pnavwn2dshm0pmh7394xfscaujexqdluwdm50y45gv24rjdga2asxpz0tl",
+            "username": "maximroye99",
+            "bio": "Hello everyone",
+            "name": "Maxim Roye",
+            "profilePicture": "/test/1672768025532.png"
+        },
+        "owners": [
+            {
+                "_id": "63b474e5d3cf7d4d3e5fdf42",
+                "wallet": "erd13wsm72uc0c2fwgtpwjn0xlrzfdh7kg59jmrnfcjh9fhqsp7g5yas5sy69l",
+                "username": "checker_official",
+                "bio": "CheckerChain Admin",
+                "name": "CheckerChain",
+                "profilePicture": "/test/1672771169415.png"
+            }
+        ],
+        "status": "published",
+        "createdAt": "2023-01-03T17:57:21.876Z",
+        "updatedAt": "2023-01-04T06:51:27.972Z",
+        "__v": 0,
+        "logo": "/test/1672768693621.png",
+        "contactEmail": "admin@checkerchain.com",
+        "discord": "https://discord.com/invite/YUcYjEEjcv",
+        "telegram": "https://t.me/checkerofficial",
+        "twitterProfile": "https://twitter.com/checker_chain",
+        "whitepaperUrl": "docs.checkerchain.com",
+        "coverImage": "/test/1672769032138.png",
+        "reviewCount": 78,
+        "isSubscribed": true
+    },
+    {
+        "currentReviewCycle": 0,
+        "location": "",
+        "openTime": "",
+        "closeTime": "",
+        "specialReviewRequest": "",
+        "discountCode": "",
+        "offer": "",
+        "_id": "63b55a52ed548fc0e498b430",
+        "name": "Zoidpay",
+        "category": {
+            _id: "1",
+            name: "Crypo & Blockchain"
+        },
+        "description": "Shop Anything from Anywhere with Crypto. A crypto liquidity platform enabling instant card issuance for purchases from any merchant at the lowest fees.",
+        "url": "www.zoidpay.com",
+        "subcategories": [
+            "DeFi",
+            "NFTs",
+            "dApps",
+            "Exchanges",
+            "Elrond",
+            "Blockchain"
+        ],
+        "slug": "zoidpay",
+        "gallery": [],
+        "teams": [],
+        "isClaimed": false,
+        "isClaiming": false,
+        "network": "elrond",
+        "createdBy": {
+            "_id": "62fb6c75acf5a50bf94e0731",
+            "wallet": "erd1vtdkxprxlrjjtp54p47ezz8twx86rml3jrgqtjqr7utjt0mwekksf9atfh",
+            "username": "emin",
+            "profilePicture": "/images/1660644543874.jpg",
+            "bio": "graphic designer",
+            "name": "emin g."
+        },
+        "owners": [],
+        "status": "published",
+        "createdAt": "2023-01-04T10:52:02.338Z",
+        "updatedAt": "2023-02-22T08:19:40.233Z",
+        "__v": 0,
+        "logo": "/test/1674651893540.png",
+        "coverImage": "/test/1677053979298.jpg",
+        "reviewCount": 12,
+        "isSubscribed": true
+    },
+    {
+        "currentReviewCycle": 0,
+        "location": "",
+        "openTime": "",
+        "closeTime": "",
+        "specialReviewRequest": "",
+        "discountCode": "",
+        "offer": "",
+        "_id": "63b5a2b9ed548fc0e498dabd",
+        "name": "Demiourgos Holdings",
+        "category": {
+            _id: "1",
+            name: "Crypo & Blockchain"
+        },
+        "description": "The first shareholders company in world, founded by NFT owners on Elrond Blockchain.",
+        "url": "www.demiourgos.holdings",
+        "subcategories": [
+            "NFTs",
+            "Elrond"
+        ],
+        "slug": "demiourgos-holdings",
+        "gallery": [],
+        "teams": [],
+        "isClaimed": false,
+        "isClaiming": false,
+        "network": "elrond",
+        "createdBy": {
+            "_id": "62f00c380228b6298aff79c7",
+            "wallet": "erd1j7mare3knpedy84xtweuqp4qp96h4dytsuq7yw2q5q9f3sm2sn3sae5v7p",
+            "username": "razvan",
+            "profilePicture": "/images/1659899104915.jpg",
+            "bio": "Born to review",
+            "name": "Razvan"
+        },
+        "owners": [],
+        "status": "published",
+        "createdAt": "2023-01-04T16:00:57.178Z",
+        "updatedAt": "2023-01-25T18:05:43.560Z",
+        "__v": 0,
+        "logo": "/test/1674669434714.jpg",
+        "coverImage": "/test/1674669409765.png",
+        "contactEmail": "info@demiourgos.holdings",
+        "discord": "https://discord.gg/szjUw4jV",
+        "telegram": "",
+        "twitterProfile": "https://twitter.com/DemiourgosH",
+        "whitepaperUrl": "https://www.demiourgos.holdings/#tokenization",
+        "reviewCount": 3,
+        "isSubscribed": false
+    },
+    {
+        "currentReviewCycle": 0,
+        "location": "",
+        "openTime": "",
+        "closeTime": "",
+        "specialReviewRequest": "",
+        "discountCode": "",
+        "offer": "",
+        "_id": "63b66325ed548fc0e498f5e5",
+        "name": "Bitcoin",
+        "category": {
+            _id: "1",
+            name: "Crypo & Blockchain"
+        },
+        "description": "Bitcoin uses peer-to-peer technology to operate with no central authority or banks; managing transactions and the issuing of bitcoins is carried out collectively by the network. Bitcoin is open-source; its design is public, nobody owns or controls Bitcoin and everyone can take part. Through many of its unique properties, Bitcoin allows exciting uses that could not be covered by any previous payment system.",
+        "url": "bitcoin.org",
+        "subcategories": [
+            "Bitcoin",
+            "Blockchain"
+        ],
+        "slug": "bitcoin-WId-iMq",
+        "gallery": [],
+        "teams": [],
+        "isClaimed": false,
+        "isClaiming": false,
+        "network": "elrond",
+        "createdBy": {
+            "_id": "62efbc0b0228b6298aff72aa",
+            "wallet": "erd1ek0u5qnzksk8drztxeassa4l8yvpu2l75mfsqxv2vsz5kze9c4pqtt8h8v",
+            "username": "FanCheck",
+            "bio": "CheckerChain Fan",
+            "name": "FanCheck",
+            "profilePicture": "/test/1677866365452.png"
+        },
+        "owners": [],
+        "status": "published",
+        "createdAt": "2023-01-05T05:41:57.846Z",
+        "updatedAt": "2023-01-25T01:16:35.428Z",
+        "__v": 0,
+        "whitepaperUrl": "https://bitcoin.org/bitcoin.pdf",
+        "contactEmail": "",
+        "discord": "",
+        "telegram": "",
+        "twitterProfile": "https://twitter.com/Bitcoin",
+        "logo": "/test/1674609345455.png",
+        "coverImage": "/test/1674609394363.jpg",
+        "reviewCount": 37,
+        "isSubscribed": true
+    },
+    {
+        "currentReviewCycle": 0,
+        "location": "",
+        "openTime": "",
+        "closeTime": "",
+        "specialReviewRequest": "",
+        "discountCode": "",
+        "offer": "",
+        "_id": "63d1c1665aac2894cdb7139b",
+        "name": "Mysterium Network",
+        "category": {
+            _id: "1",
+            name: "Crypo & Blockchain"
+        },
+        "description": "A decentralised pay as you go VPN application available for mobile or desktop. First launched on Ethereum but expanded to BNB and Polygon.",
+        "url": "www.mysterium.network/",
+        "subcategories": [
+            "dApps",
+            "Ethereum",
+            "Blockchain"
+        ],
+        "slug": "mysterium-network",
+        "gallery": [],
+        "teams": [],
+        "isClaimed": false,
+        "isClaiming": false,
+        "network": "elrond",
+        "createdBy": {
+            "_id": "62eeb1800228b6298aff5bed",
+            "wallet": "erd1luepr4tr3etd8h5fkajc0yfcnxnjmxmlyyz52q0kupxf07nwj4gq0l4kas",
+            "username": "RaduMaitare",
+            "name": "Ionut Radu Bajenaru",
+            "bio": "Blockchain enthusiast",
+            "profilePicture": "/test/1674691450914.jpg"
+        },
+        "owners": [],
+        "status": "published",
+        "createdAt": "2023-01-25T23:55:18.411Z",
+        "updatedAt": "2023-01-26T02:32:36.663Z",
+        "__v": 0,
+        "logo": "/test/1674694097727.png",
+        "coverImage": "/test/1674694579910.png",
+        "whitepaperUrl": "https://docs.mysterium.network/",
+        "contactEmail": "",
+        "discord": "",
+        "telegram": "https://t.me/mysterium_network",
+        "twitterProfile": "@MysteriumNet",
+        "reviewCount": 2,
+        "isSubscribed": false
+    }
+
+];
+
+export default carouselDummyData;

@@ -1,0 +1,92 @@
+{
+  "data": [
+    {
+      "category": "Crypto & Blockchain",
+      "subcategory": [
+        "Blockchain",
+        "Bitcoin",
+        "Ethereum",
+        "Elrond",
+        "Exchanges",
+        "dApps",
+        "NFTs",
+        "Conferences",
+        "Fan Tokens",
+        "DeFi",
+        "GameFi",
+        "Metaverse",
+        "Analytics"
+      ]
+    },
+    {
+      "category": "Product & App",
+      "subcategory": [
+        "Lifestyle",
+        "Social media",
+        "Utility",
+        "Productivity",
+        "News/Information",
+        "Accessories",
+        "Games",
+        "Alcohol",
+        "Android",
+        "Animation",
+        "Apple",
+        "Software",
+        "Finance",
+        "Sports",
+        "Beauty & Fashion",
+        "Bitcoin",
+        "Blockchain",
+        "Business",
+        "Travel",
+        "Cars",
+        "Pets",
+        "Mobile Phone",
+        "Medicines",
+        "Food",
+        "Electronics",
+        "Kids"
+      ]
+    },
+    {
+      "category": "Movies",
+      "subcategory": [
+        "Hollywood",
+        "Bollywood",
+        "Drama",
+        "Horror",
+        "Action",
+        "Comedy",
+        "Thriller",
+        "Science Fiction",
+        "Romance",
+        "Crime"
+      ]
+    },
+    {
+      "category": "Books",
+      "subcategory": [
+        "Fiction",
+        "Non-fiction",
+        "Art",
+        "Business",
+        "History",
+        "Science",
+        "Self Help"
+      ]
+    },
+    {
+      "category": "Events",
+      "subcategory": [
+        "Sports",
+        "Conference",
+        "Exhibition",
+        "Concerts",
+        "Festival",
+        "Art Performance",
+        "Community"
+      ]
+    }
+  ]
+}

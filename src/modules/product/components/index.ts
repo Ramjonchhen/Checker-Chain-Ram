@@ -1,0 +1,5 @@
+export * from "./productDescription/ProductActivity"
+export * from "./productDescription/AboutProduct"
+export * from "./Highlights"
+export * from "./Carousel"
+export * from "./Announcements"
