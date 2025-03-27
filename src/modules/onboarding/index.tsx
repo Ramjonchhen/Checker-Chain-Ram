@@ -10,6 +10,7 @@ import { Role } from "./components/Role"
 import { Stepper } from "./components/stepper"
 import { Username } from "./components/username"
 import { Welcome } from "./components/welcome"
+import { useUserStore } from "stores"
 
 interface Props {
   isOpen: boolean
@@ -17,31 +18,37 @@ interface Props {
 }
 
 export const Onboarding: FC<Props> = ({ isOpen, setIsOpen }) => {
+  const { user } = useUserStore()
   const [currentStep, setCurrentStep] = useState(0)
   const [imageFile, setImageFile] = useState<File>()
   const router = useRouter()
-  const steps = [
+
+  function nextStep() {
+    setCurrentStep((current) => current + 1)
+  }
+
+  let steps = [
     {
       name: "Welcome",
-      component: <Welcome setCurrentStep={setCurrentStep} />
+      component: <Welcome goToNextStep={nextStep} />
     },
     {
       name: "Username",
-      component: <Username setCurrentStep={setCurrentStep} />
+      component: <Username goToNextStep={nextStep} />
     },
     {
       name: "Email",
-      component: <Email setCurrentStep={setCurrentStep} />
+      component: <Email goToNextStep={nextStep} />
     },
     {
       name: "Bio",
-      component: <Bio setCurrentStep={setCurrentStep} />
+      component: <Bio goToNextStep={nextStep} />
     },
     {
       name: "Profile Picture",
       component: (
         <ProfilePicture
-          setCurrentStep={setCurrentStep}
+          goToNextStep={nextStep}
           imageFile={imageFile}
           setImageFile={setImageFile}
         />
@@ -49,19 +56,21 @@ export const Onboarding: FC<Props> = ({ isOpen, setIsOpen }) => {
     },
     {
       name: "Role",
-      component: <Role setCurrentStep={setCurrentStep} />
+      component: <Role goToNextStep={nextStep} />
     },
     {
       name: "Preferences",
-      component: (
-        <Preferences setCurrentStep={setCurrentStep} imageFile={imageFile} />
-      )
+      component: <Preferences goToNextStep={nextStep} imageFile={imageFile} />
     },
     {
       name: "Follow People",
-      component: <Interested setCurrentStep={setCurrentStep} />
+      component: <Interested goToNextStep={nextStep} />
     }
   ]
+  if (user.email) {
+    steps.splice(2, 1)
+  }
+
   return (
     <div>
       {currentStep >= 0 && currentStep < steps.length && (

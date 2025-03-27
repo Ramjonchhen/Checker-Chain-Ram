@@ -4,7 +4,7 @@ import { useUserStore } from "stores"
 import { useCategoryStore } from "stores/category"
 
 interface PreferencesProps {
-  setCurrentStep: (step: number) => void
+  goToNextStep: () => void
   imageFile: File | undefined
 }
 
@@ -14,7 +14,7 @@ export interface Preference {
 }
 
 export const Preferences: FC<PreferencesProps> = ({
-  setCurrentStep,
+  goToNextStep,
   imageFile
 }) => {
   const [preferences, setPreferences] = useState<Preference[]>([])
@@ -30,28 +30,33 @@ export const Preferences: FC<PreferencesProps> = ({
     (state: any) => state
   )
   const onSubmit = async () => {
-    if (
-      preferences
-        .map((preference) => preference.subcategory.length)
-        .reduce((a, b) => a + b, 0) < 2
-    ) {
-      setIsError(true)
-      return
-    }
-    setLoading(true)
-    if (imageFile) {
-      // const formData = new FormData()
-      // formData.append('image', imageFile)
-      await uploadImage(imageFile, "profilePicture")
-    }
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    const response = await editProfile({
-      ...onboarding,
-      preference: preferences
-    })
-    setLoading(false)
-    if (response.success) {
-      setCurrentStep(7)
+    try {
+      if (
+        preferences
+          .map((preference) => preference.subcategory.length)
+          .reduce((a, b) => a + b, 0) < 2
+      ) {
+        setIsError(true)
+        return
+      }
+      setLoading(true)
+      if (imageFile) {
+        // const formData = new FormData()
+        // formData.append('image', imageFile)
+        await uploadImage(imageFile, "profilePicture")
+      }
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      const response = await editProfile({
+        ...onboarding,
+        preference: preferences
+      })
+      setLoading(false)
+      if (response.success) {
+        console.log("preference is success going to next step")
+        goToNextStep()
+      }
+    } catch (error) {
+      console.log("preferences error is: ", error)
     }
   }
 

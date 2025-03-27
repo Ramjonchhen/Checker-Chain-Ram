@@ -1,27 +1,24 @@
-import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Input, Text } from "components";
-import { FC } from "react";
-import { useForm } from "react-hook-form";
-import { useUserStore } from "stores";
-import * as Yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup"
+import { Button, Input, Text } from "components"
+import { FC } from "react"
+import { useForm } from "react-hook-form"
+import { useUserStore } from "stores"
+import * as Yup from "yup"
 
 interface WelcomeProps {
-  setCurrentStep: (step: number) => void;
+  goToNextStep: () => void
 }
 
 interface WelcomeFormData {
-  bio: string;
+  bio: string
 }
 
-export const Bio: FC<WelcomeProps> = ({
-  setCurrentStep,
-}) => {
-  const validationSchema: Yup.SchemaOf<WelcomeFormData> =
-    Yup.object().shape({
-      bio: Yup.string()
-        .required("Bio is required")
-        .max(60, "Bio must be less than 60 characters"),
-  });
+export const Bio: FC<WelcomeProps> = ({ goToNextStep }) => {
+  const validationSchema: Yup.SchemaOf<WelcomeFormData> = Yup.object().shape({
+    bio: Yup.string()
+      .required("Bio is required")
+      .max(60, "Bio must be less than 60 characters")
+  })
 
   const {
     // editProfile,
@@ -33,27 +30,22 @@ export const Bio: FC<WelcomeProps> = ({
   const {
     register,
     formState: { errors },
-    handleSubmit,
+    handleSubmit
   } = useForm<WelcomeFormData>({
     mode: "onChange",
     defaultValues: {
       bio: onboarding.bio || ""
     },
-    resolver: yupResolver(validationSchema),
-  });
-
-
+    resolver: yupResolver(validationSchema)
+  })
 
   const onSubmit = async (data: WelcomeFormData) => {
-      setOnboarding(data)
-      setCurrentStep(4);
+    setOnboarding(data)
+    goToNextStep()
   }
   return (
     <>
-      <Text
-        variant="modal-header"
-        className="mt-[40px] !text-3xl"
-      >
+      <Text variant="modal-header" className="mt-[40px] !text-3xl">
         Enter your bio
       </Text>
       <Text
@@ -62,7 +54,11 @@ export const Bio: FC<WelcomeProps> = ({
       >
         Enter a bio that describes yourself on CheckerChain Platform.
       </Text>
-      <form className="w-full" onSubmit={handleSubmit(onSubmit)} autoComplete="off">
+      <form
+        className="w-full"
+        onSubmit={handleSubmit(onSubmit)}
+        autoComplete="off"
+      >
         <Input
           type={"text"}
           label={"Bio"}
@@ -73,8 +69,13 @@ export const Bio: FC<WelcomeProps> = ({
           autoFocus
           {...register("bio")}
         />
-        <Button type="submit" className="w-full mt-8" size="large" title="Continue" />
+        <Button
+          type="submit"
+          className="w-full mt-8"
+          size="large"
+          title="Continue"
+        />
       </form>
     </>
-  );
+  )
 }

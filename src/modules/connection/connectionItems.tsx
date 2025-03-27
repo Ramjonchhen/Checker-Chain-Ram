@@ -40,7 +40,7 @@ export const mainConnectionItems: IConnectionItem[] = [
     isPrimary: false
   },
   {
-    isComingSoon: true,
+    isComingSoon: false,
     walletName: "Coinbase",
     walletType: "Web/Mobile",
     icon: <CoinbaseIcon />,

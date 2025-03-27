@@ -4,12 +4,16 @@ import { UploadProfilePicture } from "modules/profile/components/UploadProfilePi
 import { FC, useEffect, useState } from "react"
 
 interface ProfilePictureProps {
-  setCurrentStep: (step: number) => void
+  goToNextStep: () => void
   setImageFile: (file: File | undefined) => void
   imageFile: File | undefined
 }
 
-export const ProfilePicture: FC<ProfilePictureProps> = ({ setCurrentStep, imageFile, setImageFile}) => {
+export const ProfilePicture: FC<ProfilePictureProps> = ({
+  goToNextStep,
+  imageFile,
+  setImageFile
+}) => {
   const [showUploadProfile, setShowUploadProfile] = useState(false)
   const [isError, setIsError] = useState(false)
 
@@ -21,7 +25,9 @@ export const ProfilePicture: FC<ProfilePictureProps> = ({ setCurrentStep, imageF
 
   return (
     <div className="pt-10 flex flex-col items-center w-full">
-      <Text variant="modal-header" className="!text-3xl">Pick a profile picture</Text>
+      <Text variant="modal-header" className="!text-3xl">
+        Pick a profile picture
+      </Text>
       <Text
         variant="body"
         className="mt-2 text-content-tertiary text-base text-ellipsis text-center"
@@ -34,13 +40,13 @@ export const ProfilePicture: FC<ProfilePictureProps> = ({ setCurrentStep, imageF
         className={`${"cursor-pointer"} m-6 flex flex-col justify-center items-center rounded-full border border-dashed border-outline bg-secondary-contrast w-[120px] h-[120px]`}
       >
         {!imageFile && <Icons.CameraIcon className="text-content-light" />}
-        {imageFile && <img
-              className="object-contain rounded-full w-[110px] h-[110px] border border-outline-avatar"
-              alt="avatar"
-              src={
-                URL.createObjectURL(imageFile)
-            }
-        />}
+        {imageFile && (
+          <img
+            className="object-contain rounded-full w-[110px] h-[110px] border border-outline-avatar"
+            alt="avatar"
+            src={URL.createObjectURL(imageFile)}
+          />
+        )}
       </div>
       <Modal
         overlay={false}
@@ -49,26 +55,37 @@ export const ProfilePicture: FC<ProfilePictureProps> = ({ setCurrentStep, imageF
         closeButton
         display={showUploadProfile}
       >
-        <UploadProfilePicture onChange={() => setShowUploadProfile(false)} setImageFile={setImageFile}/>
+        <UploadProfilePicture
+          onChange={() => setShowUploadProfile(false)}
+          setImageFile={setImageFile}
+        />
       </Modal>
-      {imageFile && <div
-        onClick={(e: React.MouseEvent<HTMLDivElement>) => {
-          e.stopPropagation()
-          setImageFile(undefined)
-        }}
-        className="flex cursor-pointer text-primary pt-6"
-      >
-        Remove
-      </div>}
+      {imageFile && (
+        <div
+          onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+            e.stopPropagation()
+            setImageFile(undefined)
+          }}
+          className="flex cursor-pointer text-primary pt-6"
+        >
+          Remove
+        </div>
+      )}
 
-      {isError && <p className={`text-center w-full text-error italic text-xs leading-[18px] ml-3 mt-2`}>
+      {isError && (
+        <p
+          className={`text-center w-full text-error italic text-xs leading-[18px] ml-3 mt-2`}
+        >
           Image is required
-      </p>}
-      <Button 
-        className="w-full mt-8" size="large" title="Continue" 
+        </p>
+      )}
+      <Button
+        className="w-full mt-8"
+        size="large"
+        title="Continue"
         onClick={() => {
-          if(imageFile) {
-            setCurrentStep(5)
+          if (imageFile) {
+            goToNextStep()
           } else {
             setIsError(true)
           }

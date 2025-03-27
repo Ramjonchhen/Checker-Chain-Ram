@@ -6,14 +6,14 @@ import { useUserStore } from "stores"
 import * as Yup from "yup"
 
 interface WelcomeProps {
-  setCurrentStep: (step: number) => void
+  goToNextStep: () => void
 }
 type RoleData = string | boolean
 interface RoleFormData {
   roles: RoleData[]
 }
 
-export const Role: FC<WelcomeProps> = ({ setCurrentStep }) => {
+export const Role: FC<WelcomeProps> = ({ goToNextStep }) => {
   const validationSchema: Yup.SchemaOf<RoleFormData> = Yup.object().shape({
     roles: Yup.array().test(
       "check-array",
@@ -57,11 +57,9 @@ export const Role: FC<WelcomeProps> = ({ setCurrentStep }) => {
   const [disabled, setDisabled] = useState(false)
   const onSubmit = async (data: RoleFormData) => {
     setOnboarding({
-      bestDescribeInCheckerchain: data.roles
-        .filter((role) => role)
-        .toString()
+      bestDescribeInCheckerchain: data.roles.filter((role) => role).toString()
     })
-    setCurrentStep(6)
+    goToNextStep()
   }
 
   return (

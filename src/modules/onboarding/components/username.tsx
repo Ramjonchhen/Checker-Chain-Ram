@@ -1,27 +1,24 @@
-import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Input, Text } from "components";
-import { FC } from "react";
-import { useForm } from "react-hook-form";
-import { useUserStore } from "stores";
-import * as Yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup"
+import { Button, Input, Text } from "components"
+import { FC } from "react"
+import { useForm } from "react-hook-form"
+import { useUserStore } from "stores"
+import * as Yup from "yup"
 
 interface WelcomeProps {
-  setCurrentStep: (step: number) => void;
+  goToNextStep: () => void
 }
 
 interface WelcomeFormData {
-  username: string;
+  username: string
 }
 
-export const Username: FC<WelcomeProps> = ({
-  setCurrentStep,
-}) => {
-  const validationSchema: Yup.SchemaOf<WelcomeFormData> =
-    Yup.object().shape({
-      username: Yup.string()
-        .required("username is required")
-        .max(20, "username must be less than 20 characters"),
-  });
+export const Username: FC<WelcomeProps> = ({ goToNextStep }) => {
+  const validationSchema: Yup.SchemaOf<WelcomeFormData> = Yup.object().shape({
+    username: Yup.string()
+      .required("username is required")
+      .max(20, "username must be less than 20 characters")
+  })
 
   const {
     // editProfile,
@@ -35,37 +32,36 @@ export const Username: FC<WelcomeProps> = ({
     register,
     formState: { errors },
     handleSubmit,
-    setError,
+    setError
   } = useForm<WelcomeFormData>({
     mode: "onChange",
     defaultValues: {
       username: onboarding.username || ""
     },
-    resolver: yupResolver(validationSchema),
-  });
-
-
+    resolver: yupResolver(validationSchema)
+  })
 
   const onSubmit = async (data: WelcomeFormData) => {
-    const isExists = await checkUsernameExists(data.username);
-    if(!isExists){
+    const isExists = await checkUsernameExists(data.username)
+    if (!isExists) {
       setOnboarding(data)
-      setCurrentStep(2);
+      goToNextStep()
     } else {
-      setError("username", {
-        type: "manual",
-        message: "Username is already taken",
-      },{
-        shouldFocus: true
-      })
+      setError(
+        "username",
+        {
+          type: "manual",
+          message: "Username is already taken"
+        },
+        {
+          shouldFocus: true
+        }
+      )
     }
   }
   return (
     <>
-      <Text
-        variant="modal-header"
-        className="mt-[40px] !text-3xl"
-      >
+      <Text variant="modal-header" className="mt-[40px] !text-3xl">
         Enter your Username
       </Text>
       <Text
@@ -74,7 +70,11 @@ export const Username: FC<WelcomeProps> = ({
       >
         Enter a Username that represents you on CheckerChain Platform.
       </Text>
-      <form className="w-full" onSubmit={handleSubmit(onSubmit)} autoComplete="off">
+      <form
+        className="w-full"
+        onSubmit={handleSubmit(onSubmit)}
+        autoComplete="off"
+      >
         <Input
           type={"text"}
           label={"Username"}
@@ -85,8 +85,13 @@ export const Username: FC<WelcomeProps> = ({
           autoFocus
           {...register("username")}
         />
-        <Button type="submit" className="w-full mt-8" size="large" title="Continue" />
+        <Button
+          type="submit"
+          className="w-full mt-8"
+          size="large"
+          title="Continue"
+        />
       </form>
     </>
-  );
+  )
 }

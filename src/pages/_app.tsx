@@ -17,7 +17,7 @@ import { useSettingStore, useUserStore, useWalletDialogStore } from "stores"
 import { useToastStore } from "stores/toast"
 import "../styles/globals.css"
 import "animate.css"
-
+import { SessionProvider, useSession } from "next-auth/react"
 // import "@elrondnetwork/dapp-core/dist/index.css"
 import { Onboarding } from "modules/onboarding"
 import { Toaster } from "react-hot-toast"
@@ -37,8 +37,11 @@ const Main = () => {
   const {
     isLoggedIn,
     signInWallet,
+    addingWallet,
     connectWallet,
+    addAdditionalWallet,
     signup,
+    setAuthorization,
     authorization,
     fetchProfile,
     checkWalletExists,
@@ -61,18 +64,34 @@ const Main = () => {
   const router = useRouter()
   const token = window.localStorage.getItem("token") as string
 
+  console.log("local store token is: ", token)
+
   const { getNotificationData, fetchUnseen } = useNotificationStore()
 
   const modalRef = useRef<HTMLDivElement>(null)
 
+  // session data after oauth signin
+  const { data: session } = useSession()
+
   // checking whether the token exists on local storage or not
   // and then getting user based on the user and assigning it
   useEffect(() => {
-    if (token) {
+    if (token && token.length > 0) {
+      console.log("use effect token is: ", token)
+      setAuthorization(token)
       getMe(token)
       checkOnboarded()
     }
   }, [])
+
+  useEffect(() => {
+    if (session && session?.accessToken && session?.refreshToken) {
+      window.localStorage.setItem("token", session.accessToken)
+      window.localStorage.setItem("rtoken", session.refreshToken)
+      getMe(session.accessToken)
+      checkOnboarded()
+    }
+  }, [session])
 
   useEffect(() => {
     if (router.query.referrer) {
@@ -134,6 +153,13 @@ const Main = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signInWallet])
+
+  // when the user is adding wallet after login handeling here
+  useEffect(() => {
+    if (addingWallet) {
+      addAdditionalWallet(addingWallet)
+    }
+  }, [addingWallet])
 
   useEffect(() => {
     if (authorization) {
@@ -328,7 +354,9 @@ function MyApp({ Component, pageProps }: AppProps) {
             <TransactionsToastList />
             <NotificationModal />
             <SignTransactionsModals className="signTransaction" />
-            <Main />
+            <SessionProvider>
+              <Main />
+            </SessionProvider>
             <Toasts />
             <Toaster
               position="bottom-right"

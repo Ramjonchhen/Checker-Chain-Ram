@@ -34,6 +34,7 @@ import {
   CheckerSmallLogo
   // CoinCheckr
 } from "assets/images"
+import { signOut } from "next-auth/react"
 
 export * from "./UnathorizedTopbar"
 
@@ -114,6 +115,7 @@ export const Topbar: FC<TopbarProps> = ({ menuItems }) => {
   }, [router, isLoggedIn])
 
   const clearData = () => {
+    signOut({ callbackUrl: "/" })
     resetUser()
     resetNotificationData()
     resetSettings()

@@ -13,6 +13,9 @@ import { TrashIcon } from "assets/icons"
 import { getBaseBackendImageUrl } from "utils"
 import { useToastStore } from "stores/toast"
 import SideDrawer from "components/sideDrawer"
+import { allConnectionItems } from "modules/connection/connectionItems"
+import ConnectionItemWrapper from "modules/connection/ConnectionItemWrapper"
+import { IConnectionItem } from "modules/connection/ConnectionItem"
 
 interface UserData {
   name: string
@@ -89,6 +92,39 @@ export const EditProfile: FC<Props> = ({
   const { user, loading } = useUserStore((state) => state)
   const { successToast, errorToast } = useToastStore()
   const [emailLoading, setEmailLoading] = useState(false)
+
+  const isMainWalletConnected = user.wallet && user.wallet.length > 0
+  const secondayWallets = user.secondaryWallet
+
+  let noOfConnectedWallets =
+    secondayWallets.length + (isMainWalletConnected ? 1 : 0)
+
+  let userAlreadyConnectedWallets = new Set<string>(
+    secondayWallets.map((wallet) => wallet.walletType)
+  )
+
+  let walletsUserCanAdd: IConnectionItem[] = []
+
+  if (noOfConnectedWallets < 3) {
+    allConnectionItems.forEach((connectionItem) => {
+      if (connectionItem.walletName) {
+        const isWalletAlreadyConnected = userAlreadyConnectedWallets.has(
+          connectionItem.walletName
+        )
+        if (!isWalletAlreadyConnected) {
+          walletsUserCanAdd.push(connectionItem)
+        }
+      }
+    })
+  } else {
+    if (!isMainWalletConnected) {
+      allConnectionItems.forEach((connectionItem) => {
+        if (connectionItem.isPrimary) {
+          walletsUserCanAdd.push(connectionItem)
+        }
+      })
+    }
+  }
 
   useEffect(() => {
     setValue("name", user.name)
@@ -408,6 +444,23 @@ export const EditProfile: FC<Props> = ({
             </div> */}
 
           {/* <div>Achievement Show case</div> */}
+          <label className="block text-content-primary text-[16px] font-semibold mb-1">
+            Wallet Management
+          </label>
+          <p className={`text-error italic text-xs leading-[18px]`}>
+            Note: Add upto 3 wallets for your profile for multi wallet login.
+          </p>
+          <div className="flex gap-3 overflow-y-scroll">
+            {walletsUserCanAdd.map((connectionItem) => {
+              return (
+                <ConnectionItemWrapper
+                  connectionItem={connectionItem}
+                  key={connectionItem.walletName}
+                  mode={"add"}
+                />
+              )
+            })}
+          </div>
           <div>
             <UpdateButton title="Update" loading={loading} />
           </div>

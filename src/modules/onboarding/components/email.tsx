@@ -6,14 +6,14 @@ import { useUserStore } from "stores"
 import * as Yup from "yup"
 
 interface WelcomeProps {
-  setCurrentStep: (step: number) => void
+  goToNextStep: () => void
 }
 
 interface WelcomeFormData {
   email: string
 }
 
-export const Email: FC<WelcomeProps> = ({ setCurrentStep }) => {
+export const Email: FC<WelcomeProps> = ({ goToNextStep }) => {
   const validationSchema: Yup.SchemaOf<WelcomeFormData> = Yup.object().shape({
     email: Yup.string()
       .required("Email is required.")
@@ -45,7 +45,7 @@ export const Email: FC<WelcomeProps> = ({ setCurrentStep }) => {
     const isExists = await checkEmailExists(data.email)
     if (!isExists) {
       setOnboarding(data)
-      setCurrentStep(3)
+      goToNextStep()
     } else {
       setError(
         "email",

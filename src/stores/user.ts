@@ -9,6 +9,16 @@ import { devtools } from "zustand/middleware"
 import jwt_decode from "jwt-decode"
 import { supportingWallets } from "modules/connection/ConnectionItem"
 
+interface ISecondayWallet {
+  walletType: supportingWallets,
+  adddress: string,
+}
+
+interface ISocial {
+  provider: "X" | "Google",
+  providerId: string,
+}
+
 export interface User {
   _id: string
   achievementPoints: string
@@ -28,6 +38,8 @@ export interface User {
   coverImage?: string | null
   rank: number
   wallet: string
+  secondaryWallet: ISecondayWallet[]
+  socialType?: ISocial,
   bio?: string
   username: string
   followed: boolean
@@ -86,11 +98,13 @@ interface UserState {
   followings: object[]
   referrals: any
   recommendedFollowers: User[]
+  setAuthorization: (token: string) => void
   getMe: (token: string) => void,
   getReferrals: () => void
   setOnboarding: (data: object) => void
   checkOnboarded: () => void
   connectWallet: (walletData: WalletData) => void
+  addAdditionalWallet: (walletData: WalletData) => void
   fetchProfile: () => void
   checkIsProfileComplete: () => void
   followUser: (wallet: string, updateOtherUser?: boolean) => Promise<any>
@@ -119,7 +133,7 @@ interface UserState {
   resendVerificationEmail: () => Promise<any>
 }
 
-const initialUserState = {
+const initialUserState: User = {
   _id: "",
   achievementPoints: "",
   badge: [],
@@ -137,6 +151,7 @@ const initialUserState = {
   profilePicture: "",
   rank: 0,
   wallet: "",
+  secondaryWallet: [],
   username: "",
   followed: false,
   referralCode: "",
@@ -203,7 +218,10 @@ const cancelRequestAxiosObject = new cancelRequestAxios()
 export const useUserStore = create<UserState>()(
   devtools((set, get) => ({
     ...initialState,
-    getMe: async (token: string) => {
+    setAuthorization: (token: string) => {
+      set({ authorization: token })
+    },
+    getMe: async (token) => {
       try {
         set({ loading: true })
         const { data } = await api.get(`/me`, {
@@ -218,7 +236,9 @@ export const useUserStore = create<UserState>()(
       }
     },
     setOnboarding: (data: object) => {
-      set({ onboarding: { ...get().onboarding, ...data } })
+      const userEmail = get()?.user?.email;
+      const onBoardingEmail = userEmail ? undefined : get().onboarding.email;
+      set({ onboarding: { ...get().onboarding, ...data, email: onBoardingEmail, } })
     },
     checkUsernameExists: async (username: string) => {
       try {
@@ -278,6 +298,27 @@ export const useUserStore = create<UserState>()(
       window.localStorage.setItem("token", data["accessToken"])
       window.localStorage.setItem("rtoken", data["refreshToken"])
       set({ wallet: walletData.account, authorization: data["accessToken"] || "", loading: false })
+    },
+    addAdditionalWallet: async (walletData: WalletData) => {
+      set({ loading: true })
+      const { data } = await api.post(`/addWallet`, {
+        walletToken: jwt.sign(
+          {
+            address: walletData.account,
+            walletType: walletData.provider,
+            isPrimary: walletData.isPrimary,
+          },
+          constants.WALLET_PVT_KEY,
+          {
+            expiresIn: 60 * 1000
+          }
+        ),
+        headers: {
+          Authorization: `Bearer ${get().authorization}`
+        }
+      });
+
+      set({ user: data.user, loading: false })
     },
     signup: async (walletData: WalletData) => {
       set({ loading: true })
@@ -361,6 +402,7 @@ export const useUserStore = create<UserState>()(
       data && data.user && set({ user: data.user, loading: false, isLoggedIn: true })
     },
     fetchOtherProfile: async (username: string) => {
+      console.log("fetch other profile called: ")
       set({
         loading: true,
         otherUser: initialUserState
@@ -371,9 +413,12 @@ export const useUserStore = create<UserState>()(
           wallet: get().wallet
         }
       })
+
+      console.log("feth other profile data is: ", data);
       set({ otherUser: data.user, loading: false })
     },
     checkIsProfileComplete: async () => {
+      console.log("check is porifle comeplete called")
       if (get().wallet) {
         set({ loading: true })
         const { data } = await api.get(`/isCompleteProfile`)

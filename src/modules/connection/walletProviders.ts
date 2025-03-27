@@ -1,4 +1,5 @@
-
+import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
+import { ethers } from 'ethers';
 
 /**
  * Connects to MetaMask.
@@ -76,17 +77,36 @@ export async function connectTrustWallet() {
  * - If available, requests accounts and returns the first account.
  */
 export async function connectCoinbaseWallet() {
-    if (typeof window.ethereum === 'undefined' || !window.ethereum.isCoinbaseWallet) {
-        // Redirect to Coinbase Wallet website.
-        window.open('https://www.coinbase.com/wallet', '_blank');
-        return null;
-    }
-    try {
-        const accounts: string[] = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        return accounts[0];
-    } catch (error) {
-        console.error('Coinbase Wallet connection error:', error);
-        return null;
+    // Approach 1: Check if Coinbase Wallet is injected in the browser.
+    if (typeof window.ethereum !== 'undefined' && window.ethereum.isCoinbaseWallet) {
+        try {
+            const accounts: string[] = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            return accounts[0];
+        } catch (error) {
+            console.error('Coinbase Wallet connection error (injected):', error);
+            return null;
+        }
+    } else {
+        // Approach 2: Use Coinbase Wallet SDK as a fallback.
+        try {
+            // Configure your app details and network settings.
+            const APP_NAME = "Checker Chain";
+
+            // Initialize the Coinbase Wallet SDK
+            const coinbaseWallet = new CoinbaseWalletSDK({
+                appName: APP_NAME,
+            });
+
+            // Create a Web3 provider using Coinbase Wallet SDK.
+            const ethereum = coinbaseWallet.makeWeb3Provider();
+
+            // Request account access.
+            const accounts: string[] = await ethereum.request({ method: 'eth_requestAccounts' }) as string[];
+            return accounts[0];
+        } catch (error) {
+            console.error('Coinbase Wallet connection error (SDK):', error);
+            return null;
+        }
     }
 }
 

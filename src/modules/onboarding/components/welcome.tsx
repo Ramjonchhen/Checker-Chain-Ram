@@ -9,7 +9,7 @@ import { toSubstring } from "utils"
 import * as Yup from "yup"
 
 interface WelcomeProps {
-  setCurrentStep: (step: number) => void
+  goToNextStep: () => void
 }
 
 interface WelcomeFormData {
@@ -17,7 +17,7 @@ interface WelcomeFormData {
   referredBy?: string
 }
 
-export const Welcome: FC<WelcomeProps> = ({ setCurrentStep }) => {
+export const Welcome: FC<WelcomeProps> = ({ goToNextStep }) => {
   const { account } = useGetAccountInfo()
   const { isLoggedIn } = useGetLoginInfo()
   const validationSchema: Yup.SchemaOf<WelcomeFormData> = Yup.object().shape({
@@ -61,7 +61,7 @@ export const Welcome: FC<WelcomeProps> = ({ setCurrentStep }) => {
     // const response: any = await editProfile(data);
     // if(response?.success) {
     setOnboarding(data)
-    setCurrentStep(1)
+    goToNextStep()
     // }
   }
 

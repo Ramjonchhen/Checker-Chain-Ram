@@ -16,7 +16,6 @@ export const BasicInformation: FC<{
   user: User
 }> = ({ user }) => {
   const {
-    wallet,
     followUser,
     getRecommendedFollowers,
     loading,
@@ -60,6 +59,8 @@ export const BasicInformation: FC<{
     }
   }
 
+  const isProfileOfMainUser = user._id === mainUser._id
+
   return (
     <Card className="px-0 py-0 bg-white">
       {/** Gradient Div */}
@@ -99,7 +100,7 @@ export const BasicInformation: FC<{
       </Modal>
 
       <div className="relative ">
-        {wallet === user.wallet && (
+        {isProfileOfMainUser && (
           <div
             className="hover:animate-scale absolute p-1 top-2 right-2 text-white bg-primary rounded-lg cursor-pointer"
             onClick={() => {
@@ -186,7 +187,7 @@ export const BasicInformation: FC<{
               </span>
             </div>
 
-            {wallet === user.wallet && (
+            {isProfileOfMainUser && (
               <DropdownMenu
                 className=""
                 items={[
@@ -203,11 +204,11 @@ export const BasicInformation: FC<{
                 </div>
               </DropdownMenu>
             )}
-            {wallet !== user.wallet && (
+            {!isProfileOfMainUser && (
               <Button
                 variant={isFollowed ? "default" : "outlined"}
                 title={isFollowed ? "Following" : "Follow"}
-                disabled={user.wallet === wallet}
+                disabled={isProfileOfMainUser}
                 size="medium"
                 onClick={async () => {
                   await follow()
@@ -235,7 +236,7 @@ export const BasicInformation: FC<{
               ).flat()}
             />
           </div>
-          {wallet === user.wallet && <ProfileStatus />}
+          {isProfileOfMainUser && <ProfileStatus />}
         </div>
       </div>
     </Card>

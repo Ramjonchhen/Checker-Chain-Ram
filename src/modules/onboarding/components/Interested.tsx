@@ -4,10 +4,10 @@ import { FC, useEffect } from "react"
 import { User, useUserStore } from "stores"
 
 interface InterestedProps {
-  setCurrentStep: (step: number) => void
+  goToNextStep: () => void
 }
 
-export const Interested: FC<InterestedProps> = ({ setCurrentStep }) => {
+export const Interested: FC<InterestedProps> = ({ goToNextStep }) => {
   const history = useRouter()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const {
@@ -18,7 +18,7 @@ export const Interested: FC<InterestedProps> = ({ setCurrentStep }) => {
     checkOnboarded,
     authorization
   } = useUserStore((state) => state)
-  
+
   useEffect(() => {
     if (authorization) {
       getRecommendedFollowers()
@@ -27,7 +27,9 @@ export const Interested: FC<InterestedProps> = ({ setCurrentStep }) => {
 
   return (
     <div className="pt-10 pb-0 flex flex-col items-center w-full">
-      <Text className="!text-3xl" variant="modal-header">Checkers you might be interested in</Text>
+      <Text className="!text-3xl" variant="modal-header">
+        Checkers you might be interested in
+      </Text>
       <div className="flex flex-wrap gap-2 my-4 w-full max-h-[290px] overflow-y-scroll overflow-x-auto">
         {recommendedFollowers.map((people: User) => (
           <UserRow
@@ -44,9 +46,9 @@ export const Interested: FC<InterestedProps> = ({ setCurrentStep }) => {
       <Button
         size="large"
         onClick={async () => {
-          setCurrentStep(0)
-          await checkOnboarded(user.wallet)
-          await fetchProfile()
+          goToNextStep()
+          checkOnboarded()
+          fetchProfile()
           history.push(`/`)
         }}
         title="Proceed"

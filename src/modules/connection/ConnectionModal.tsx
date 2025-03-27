@@ -24,7 +24,7 @@ const ConnectionModal = () => {
         mainClassName="z-[2147483642] pt-10"
         dismissable
       >
-        <div className="pb-10 pt-6">
+        <div className="pt-6">
           <div className="text-center">
             <div className="text-neutral-900 text-xl font-bold leading-6 tracking-[0.2px]">
               Connect Wallet
@@ -34,7 +34,7 @@ const ConnectionModal = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-4 gap-3 mt-10">
+          <div className="grid grid-cols-4 gap-3 mt-10 place-items-center place-content-center">
             {/* // refactor this */}
             {(showAllWallets ? allConnectionItems : mainConnectionItems).map(
               (connectionItem) => {
@@ -51,7 +51,7 @@ const ConnectionModal = () => {
           {!showAllWallets && (
             <button
               onClick={() => setShowAllWallets(true)}
-              className="min-w-[84px] max-w-[98px] flex-1 bg-[#ECF2FA] flex flex-col items-center rounded-lg py-[10px] px-1 h-full cursor-pointer hover:bg-primary-500 transition-colors duration-400 group"
+              className="min-w-[84px] max-w-[98px] flex-1 bg-[#ECF2FA] flex flex-col items-center rounded-lg py-[10px] px-1 h-full cursor-pointer hover:bg-primary-500 transition-colors duration-400 group mx-auto my-4"
             >
               <div className="w-[37px] h-[37px] rounded-lg grid place-items-center">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -78,15 +78,14 @@ const ConnectionModal = () => {
             <div className="text-sm text-neutral-600">Or Continue With</div>
             <div className="flex-1 h-[1px] bg-neutral-200"></div>
           </div>
-        </div>
-
-        <div className="grid grid-cols-4 gap-2">
-          {socialLoginItems.map((connectionItem) => (
-            <SocialConnectButton
-              name={connectionItem.name}
-              icon={connectionItem.icon}
-            />
-          ))}
+          <div className="flex items-center justify-center gap-x-2.5">
+            {socialLoginItems.map((connectionItem) => (
+              <SocialConnectButton
+                name={connectionItem.name}
+                icon={connectionItem.icon}
+              />
+            ))}
+          </div>
         </div>
       </Modal>
     </>
