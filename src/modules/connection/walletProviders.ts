@@ -1,5 +1,8 @@
 import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
 import { EthereumProvider } from '@walletconnect/ethereum-provider';
+import { supportingWallets } from './ConnectionItem';
+
+let walletConnectProvider: any = null;  // Store provider instance
 
 /**
  * Connects to MetaMask.
@@ -116,52 +119,98 @@ export async function connectCoinbaseWallet() {
  * - Creates a new instance and triggers the QR code modal for connection.
  * - Returns the first account after connection.
  */
-export async function connectWalletConnect() {
-    const allowedWallets = [
-        "MetaMask",
-        "Phantom",
-        "SubWallet",
-        "TrustWallet",
-        "Coinbase Wallet",
-        "Multiversex",
-    ];
 
+const SUPPORTED_WALLETS: supportingWallets[] = [
+    "MetaMask",
+    "Phantom",
+    "Trust Wallet",
+    "Coinbase",
+    "WalletConnect",
+    "SubWallet",
+    "MultiversX",
+    "Ledger",
+    "Web Wallet",
+    "xPortal"
+];
+
+
+export async function connectWalletConnect() {
     try {
-        // Initialize the WalletConnect v2 provider with your projectId and desired chains.
         const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
 
         if (!projectId) {
-            throw new Error("Missing Wallet Connect Project Id")
+            throw new Error('WalletConnect project ID is not configured');
         }
 
-        const provider = await EthereumProvider.init({ projectId, showQrModal: true, optionalChains: [137, 56] });
+        // Initialize with specific modal options
+        const provider = await EthereumProvider.init({
+            projectId,
+            chains: [1],
+            showQrModal: true,
+            qrModalOptions: {
+                themeMode: "light",
+                themeVariables: {
+                    "--wcm-z-index": "99999",
+                    "--wcm-background-color": "#ffffff",
+                    "--wcm-accent-color": "#000000",
+                },
+                explorerRecommendedWalletIds: "NONE", // Don't filter wallets
+                privacyPolicyUrl: undefined,
+                termsOfServiceUrl: undefined
+            },
+            metadata: {
+                name: 'Checker Chain',
+                description: 'Checker Chain Application',
+                url: window.location.origin,
+                icons: [`${window.location.origin}/icon.png`]
+            }
+        });
 
-        console.log("provider is: ", provider)
-        // Trigger the connection process (this will display a QR code)
+        // Event listeners
+        provider.on('display_uri', (uri: string) => {
+            console.log('WalletConnect QR Code URI:', uri);
+            console.log('QR Code Modal Status: Displaying');
+            // Force modal to show
+            if (provider.modal?.openModal) {
+                provider.modal.openModal();
+            }
+        });
+
+        provider.on('connect', () => {
+            console.log('WalletConnect: Connected successfully');
+        });
+
+        console.log('WalletConnect: Enabling provider...');
         await provider.enable();
+        console.log('WalletConnect: Provider enabled');
 
-        // Retrieve connected wallet accounts
-        const accounts = provider.accounts;
-        if (!accounts || accounts.length === 0) {
-            throw new Error("No wallet accounts found.");
+        try {
+            const accounts = await provider.request({ method: 'eth_accounts' });
+            console.log('WalletConnect: Retrieved accounts', accounts);
+            
+            if (!accounts || !Array.isArray(accounts) || accounts.length === 0) {
+                throw new Error('No valid accounts found');
+            }
+
+            const walletAddress = accounts[0];
+            const detectedWalletType = provider.session?.peer?.metadata?.name;
+            const walletType = (detectedWalletType && SUPPORTED_WALLETS.includes(detectedWalletType as supportingWallets)) 
+                ? detectedWalletType 
+                : "WalletConnect";
+
+            console.log('WalletConnect: Connected wallet type:', walletType);
+
+            return {
+                walletAddress,
+                walletType
+            };
+        } catch (accountError) {
+            console.error('Error getting accounts:', accountError);
+            throw new Error('Failed to get wallet accounts');
         }
-        const walletAddress = accounts[0];
-
-        // Retrieve wallet metadata if available (e.g., wallet name)
-        const walletType = provider.session?.peer?.metadata?.name || "Unknown";
-        // Check if the connected wallet is within our allowed list.
-        if (!allowedWallets.includes(walletType)) {
-            throw new Error(`The connected wallet "${walletType}" is not supported.`);
-        }
-
-        // You can now use walletAddress and walletType in your Dapp.
-        console.log("Connected wallet address:", walletAddress);
-        console.log("Wallet type:", walletType);
-
-        return { walletAddress, walletType };
     } catch (error) {
         console.error('WalletConnect connection error:', error);
-        return null;
+        throw error;
     }
 }
 

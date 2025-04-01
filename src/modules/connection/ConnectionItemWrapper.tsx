@@ -135,52 +135,88 @@ const ConnectionItemWrapper = ({
   }, [account])
 
   const handleConnect = async () => {
+    console.log(`Attempting to connect with ${connectionItem.walletName}`)
     let walletAddress: string | null = ""
     let trustWalletConnectedWalletType = ""
-    switch (connectionItem.walletName) {
-      case "MetaMask":
-        walletAddress = await connectMetaMask()
-        break
 
-      case "Phantom":
-        walletAddress = await connectPhantom()
-        break
+    try {
+      switch (connectionItem.walletName) {
+        case "MetaMask":
+          walletAddress = await connectMetaMask()
+          console.log("MetaMask connection result:", walletAddress)
+          break
 
-      case "SubWallet":
-        walletAddress = await connectSubWallet()
-        break
+        case "Phantom":
+          walletAddress = await connectPhantom()
+          console.log("Phantom connection result:", walletAddress)
+          break
 
-      case "Trust Wallet":
-        walletAddress = await connectTrustWallet()
-        break
+        case "SubWallet":
+          walletAddress = await connectSubWallet()
+          console.log("SubWallet connection result:", walletAddress)
+          break
 
-      case "Coinbase":
-        walletAddress = await connectCoinbaseWallet()
-        break
+        case "Trust Wallet":
+          walletAddress = await connectTrustWallet()
+          console.log("Trust Wallet connection result:", walletAddress)
+          break
 
-      case "WalletConnect":
-        const walletConnectConnectedObj = await connectWalletConnect()
-        console.log("wallet connect connection is: ", walletConnectConnectedObj)
-        break
+        case "Coinbase":
+          walletAddress = await connectCoinbaseWallet()
+          console.log("Coinbase connection result:", walletAddress)
+          break
 
-      default:
-        console.error("Unsupported wallet provider")
-    }
-    if (walletAddress && connectionItem.walletName) {
-      // For initial login, set as primary wallet; otherwise, add it as an additional wallet.
-      if (mode === "login") {
-        signInWithWallet({
-          provider: connectionItem.walletName,
-          account: walletAddress,
-          isPrimary: false
-        })
-      } else {
-        connectAdditionalWallet({
-          provider: connectionItem.walletName,
-          account: walletAddress,
-          isPrimary: false
-        })
+        case "WalletConnect":
+          try {
+            const walletConnectResult = await connectWalletConnect()
+            console.log("WalletConnect connection result:", walletConnectResult)
+            if (walletConnectResult?.walletAddress) {
+              const address: string = walletConnectResult.walletAddress
+
+
+              // Sign in immediately after successful connection
+              if (mode === "login") {
+                await signInWithWallet({
+                  provider: connectionItem.walletName,
+                  account: walletAddress,
+                  isPrimary: false
+                })
+              } else {
+                await connectAdditionalWallet({
+                  provider: connectionItem.walletName,
+                  account: walletAddress,
+                  isPrimary: false
+                })
+              }
+            }
+          } catch (wcError) {
+            console.error("WalletConnect error:", wcError)
+            infoToast({
+              message: "Failed to connect with WalletConnect"
+            })
+          }
+        default:
+          console.error("Unsupported wallet provider:", connectionItem.walletName)
       }
+
+      if (walletAddress && connectionItem.walletName && connectionItem.walletName !== "WalletConnect") {
+        console.log(`Successfully connected ${connectionItem.walletName}:`, walletAddress)
+        if (mode === "login") {
+          signInWithWallet({
+            provider: connectionItem.walletName,
+            account: walletAddress,
+            isPrimary: false
+          })
+        } else {
+          connectAdditionalWallet({
+            provider: connectionItem.walletName,
+            account: walletAddress,
+            isPrimary: false
+          })
+        }
+      }
+    } catch (error) {
+      console.error(`Error connecting ${connectionItem.walletName}:`, error)
     }
   }
 

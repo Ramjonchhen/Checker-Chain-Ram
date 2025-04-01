@@ -35,8 +35,17 @@ function ConnectionItem({
   isComingSoon = false,
   icon = <WalletIcon />,
   walletName = "MultiversX",
-  handleItemCick = () => {}
+  handleItemCick = () => { }
+
+
+
+
 }: IConnectionItem & Props) {
+  const handleClick = (e: React.MouseEvent) => {
+    if (handleItemCick) {
+      handleItemCick(walletName);
+    }
+  };
   return (
     <div
       className={twMerge(
@@ -45,7 +54,7 @@ function ConnectionItem({
           ? "pointer-events-none cursor-not-allowed opacity-[45%]"
           : "cursor-pointer hover:bg-primary-500 transition-colors duration-400"
       )}
-      onClick={() => handleItemCick(walletName)}
+      onClick={handleClick}
     >
       <div className="w-[37px]  flex-shrink-0 h-[37px]  rounded-lg  grid place-items-center">
         {icon}
