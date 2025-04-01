@@ -155,7 +155,8 @@ export async function connectWalletConnect() {
                 "--w3m-z-index": "999999999",
                 "--w3m-background-color": "#ffffff",
                 "--w3m-accent-color": "#000000",
-                "--w3m-background-border-radius": "24px"
+                "--w3m-background-border-radius": "24px",
+            
             }
         });
 
@@ -169,7 +170,12 @@ export async function connectWalletConnect() {
                 description: 'Checker Chain Application',
                 url: window.location.origin,
                 icons: [`${window.location.origin}/icon.png`]
-            }
+            },
+            optionalChains: [1, 137, 56],
+    qrModalOptions: {
+        explorerRecommendedWalletIds: undefined, // This will show all compatible wallets including MetaMask
+        themeMode: "light"
+    }
         });
 
         // Set up event listeners
