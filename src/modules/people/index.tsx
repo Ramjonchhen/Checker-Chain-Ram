@@ -85,7 +85,7 @@ export const People = () => {
               bio={people.bio}
               followed={false}
               className="lg:w-[813px] py-[33px] sm:p-[33px]"
-              wallet={people.wallet}
+              id={people._id}
               badges={Array.from(
                 new Set(people.preference.map((p) => p.subcategory).flat())
               )}

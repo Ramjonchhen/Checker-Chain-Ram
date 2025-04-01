@@ -14,7 +14,8 @@ import {
   connectMetaMask,
   connectPhantom,
   connectSubWallet,
-  connectTrustWallet
+  connectTrustWallet,
+  connectWalletConnect
 } from "./walletProviders"
 
 type Props = {
@@ -111,20 +112,31 @@ const ConnectionItemWrapper = ({
     })
   }
 
+  console.log("connecting wallet: ", connectionItem.walletName)
+
   const { account } = useGetAccountInfo()
 
   useEffect(() => {
     if (account && account.address) {
-      signInWithWallet({
-        provider: "MultiversX",
-        account: account.address,
-        isPrimary: true
-      })
+      if (mode === "login") {
+        signInWithWallet({
+          provider: "MultiversX",
+          account: account.address,
+          isPrimary: true
+        })
+      } else {
+        connectAdditionalWallet({
+          provider: "MultiversX",
+          account: account.address,
+          isPrimary: true
+        })
+      }
     }
   }, [account])
 
   const handleConnect = async () => {
     let walletAddress: string | null = ""
+    let trustWalletConnectedWalletType = ""
     switch (connectionItem.walletName) {
       case "MetaMask":
         walletAddress = await connectMetaMask()
@@ -144,6 +156,11 @@ const ConnectionItemWrapper = ({
 
       case "Coinbase":
         walletAddress = await connectCoinbaseWallet()
+        break
+
+      case "WalletConnect":
+        const walletConnectConnectedObj = await connectWalletConnect()
+        console.log("wallet connect connection is: ", walletConnectConnectedObj)
         break
 
       default:

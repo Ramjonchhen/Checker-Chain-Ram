@@ -107,9 +107,9 @@ interface UserState {
   addAdditionalWallet: (walletData: WalletData) => void
   fetchProfile: () => void
   checkIsProfileComplete: () => void
-  followUser: (wallet: string, updateOtherUser?: boolean) => Promise<any>
-  getFollowers: (wallet: string) => void
-  getFollowings: (wallet: string) => void
+  followUser: (toFollowId: string, updateOtherUser?: boolean) => Promise<any>
+  getFollowers: (userId: string) => void
+  getFollowings: (userId: string) => void
   getRecommendedFollowers: () => void
   editProfile: (user: object) => void
   fetchOtherProfile: (username: string) => void
@@ -269,6 +269,8 @@ export const useUserStore = create<UserState>()(
     },
     checkOnboarded: async () => {
       set({ loading: true })
+      console.log("checkOnboarded called");
+      console.log("token is: ", get().authorization);
       const { data } = await api.get(`/checkOnboarded`, {
         headers: {
           Authorization: `Bearer ${get().authorization}`
@@ -295,6 +297,7 @@ export const useUserStore = create<UserState>()(
           }
         )
       })
+      console.log("connecting wallet res is: ", data);
       window.localStorage.setItem("token", data["accessToken"])
       window.localStorage.setItem("rtoken", data["refreshToken"])
       set({ wallet: walletData.account, authorization: data["accessToken"] || "", loading: false })
@@ -418,72 +421,72 @@ export const useUserStore = create<UserState>()(
       set({ otherUser: data.user, loading: false })
     },
     checkIsProfileComplete: async () => {
-      console.log("check is porifle comeplete called")
+      console.log("check is profile comeplete called")
       if (get().wallet) {
         set({ loading: true })
         const { data } = await api.get(`/isCompleteProfile`)
         set({ isOnboarded: data.isProfileComplete, loading: false })
       }
     },
-    followUser: async (wallet, updateOtherUser = true) => {
-      if (get().wallet) {
-        set({ loading: true })
-        const response = await api.post(
-          `/follow`,
-          {
-            followFrom: get().wallet,
-            followTo: wallet
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${get().authorization}`
+    followUser: async (toFollowUserId, updateOtherUser = true) => {
+      set({ loading: true })
+      const response = await api.post(
+        `/follow`,
+        {
+          followFrom: get().user._id,
+          followTo: toFollowUserId
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${get().authorization}`
+          }
+        }
+      )
+      set({
+        loading: false,
+        user: {
+          ...get().user,
+          following: response.data.data.following,
+          points: response.data.data.points
+        },
+        ...(updateOtherUser
+          ? {
+            otherUser: {
+              ...get().otherUser,
+              follower: response.data.data.toFollowers,
+              followed: !get().otherUser.followed,
+              points: response.data.data.toPoints
             }
           }
-        )
-        set({
-          loading: false,
-          user: {
-            ...get().user,
-            following: response.data.data.following,
-            points: response.data.data.points
-          },
-          ...(updateOtherUser
-            ? {
-              otherUser: {
-                ...get().otherUser,
-                follower: response.data.data.toFollowers,
-                followed: !get().otherUser.followed,
-                points: response.data.data.toPoints
-              }
-            }
-            : {})
-        })
-        return response
-      }
+          : {})
+      })
+      return response
     },
-    getFollowers: async (wallet) => {
-      if (wallet) {
+    getFollowers: async (userId) => {
+      const currUser = get().user;
+      if (userId && currUser) {
         set({ loading: true })
-        const { data } = await api.get(`/followerList/${wallet}`, {
+        const { data } = await api.get(`/followerList/${userId}`, {
           headers: {
             Authorization: `Bearer ${get().authorization}`
           },
           params: {
-            currentWallet: get().wallet
+            currentUserId: currUser._id,
           }
         })
         set({ followers: data.follower, loading: false })
       }
     },
-    getFollowings: async (wallet) => {
-      if (wallet) {
+    getFollowings: async (userId) => {
+      const currUser = get().user;
+      if (userId && currUser) {
         set({ loading: true })
-        const { data } = await api.get(`/followingList/${wallet}`, {
+        const { data } = await api.get(`/followingList/${userId}`, {
           headers: {
             Authorization: `Bearer ${get().authorization}`
           },
           params: {
-            currentWallet: get().wallet
+            currentUserId: currUser._id,
           }
         })
         set({ followings: data.following, loading: false })
@@ -516,32 +519,17 @@ export const useUserStore = create<UserState>()(
         headers: {
           Authorization: `Bearer ${get().authorization}`
         },
-        params: {
-          wallet: get().wallet
-        }
       })
       set({ connectedLeaderboards: data.data })
       set({ loading: false })
     },
     fetchGlobalLeaderboards: async () => {
       set({ loading: true })
-      let wallet: any = null;
-      if (window.localStorage.getItem("token")) {
-        const token = window.localStorage.getItem("token") as string
-        try {
-          const decoded = jwt_decode(token) as any
-          wallet = decoded.wallet
-        } catch (error) {
-          window.localStorage.removeItem("token")
-        }
-      }
+
       const { data } = await api.get("/leaderboard/global", {
         headers: {
           Authorization: `Bearer ${get().authorization}`
         },
-        params: wallet ? {
-          wallet
-        } : {}
       })
       set({ globalLeaderboards: data.data })
       set({ loading: false })
@@ -551,9 +539,6 @@ export const useUserStore = create<UserState>()(
         headers: {
           Authorization: `Bearer ${get().authorization}`
         },
-        params: {
-          wallet: get().wallet
-        }
       })
       set({ referrals: data.referrals })
       // set({ loading: false })

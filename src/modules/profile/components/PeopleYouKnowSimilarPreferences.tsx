@@ -29,7 +29,7 @@ export const PeopleYouKnowSimilarPreferences: FC<{
               profileImage={people.profilePicture || ""}
               name={people.name}
               description={people.level}
-              wallet={people.wallet}
+              id={people._id}
               username={people.username}
               followed={false}
             />
@@ -51,7 +51,7 @@ export const PeopleYouKnowSimilarPreferences: FC<{
                 bio={people.bio}
                 followed={false}
                 className="lg:w-[813px] p-0 sm:p-[33px]"
-                wallet={people.wallet}
+                id={people._id}
                 badges={Array.from(
                   new Set(people.preference.map((p) => p.subcategory).flat())
                 )}

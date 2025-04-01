@@ -14,14 +14,15 @@ export const UserRow: FC<UserRowProps> = ({
   className,
   badges,
   bio,
-  wallet,
+  id,
   username
 }) => {
   const [isFollowing, setIsFollowing] = useState(followed)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { followUser, user, getRecommendedFollowers, authorization } = useUserStore((state) => state)
+  const { followUser, user, getRecommendedFollowers, authorization } =
+    useUserStore((state) => state)
   const follow = async () => {
-    await followUser(wallet, false)
+    await followUser(id, false)
     setIsFollowing(!isFollowing)
     setTimeout(() => {
       getRecommendedFollowers()
@@ -33,7 +34,7 @@ export const UserRow: FC<UserRowProps> = ({
     // if (profileImage.includes("http")) {
     //   return profileImage
     // }
-    if(profileImage){
+    if (profileImage) {
       return `${process.env.NEXT_PUBLIC_SPACE_BASE}${profileImage}`
     } else {
       return NoProfileImage.src
@@ -67,11 +68,11 @@ export const UserRow: FC<UserRowProps> = ({
             <Button
               variant={isFollowing ? "default" : "outlined"}
               title={isFollowing ? "Following" : "Follow"}
-              disabled={user.wallet === wallet || !authorization}            
+              disabled={user._id === id || !authorization}
               size="small"
               titleClassName="text-[14px] font-medium"
-              onClick={async ()=>{
-                if(!authorization) return
+              onClick={async () => {
+                if (!authorization) return
                 follow()
               }}
             />

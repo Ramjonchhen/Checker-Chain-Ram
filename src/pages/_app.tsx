@@ -120,6 +120,7 @@ const Main = () => {
     if (signInWallet) {
       setMaiarLoginDialog(false)
       checkWalletExists(signInWallet).then((response) => {
+        console.log("wallet exists response is: ", response.data.exists)
         response.data.exists
           ? connectWallet(signInWallet)
           : signup(signInWallet)

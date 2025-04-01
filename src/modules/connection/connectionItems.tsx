@@ -47,7 +47,7 @@ export const mainConnectionItems: IConnectionItem[] = [
     isPrimary: false
   },
   {
-    isComingSoon: true,
+    isComingSoon: false,
     walletName: "WalletConnect",
     walletType: "Web/ Mobile",
     icon: <WalletConnectIcon />,

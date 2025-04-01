@@ -81,6 +81,7 @@ const ConnectionModal = () => {
           <div className="flex items-center justify-center gap-x-2.5">
             {socialLoginItems.map((connectionItem) => (
               <SocialConnectButton
+                key={connectionItem.name}
                 name={connectionItem.name}
                 icon={connectionItem.icon}
               />

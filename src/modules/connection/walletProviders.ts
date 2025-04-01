@@ -1,5 +1,5 @@
 import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
-import { ethers } from 'ethers';
+import { EthereumProvider } from '@walletconnect/ethereum-provider';
 
 /**
  * Connects to MetaMask.
@@ -116,35 +116,54 @@ export async function connectCoinbaseWallet() {
  * - Creates a new instance and triggers the QR code modal for connection.
  * - Returns the first account after connection.
  */
-// export async function connectWalletConnect(): Promise<WalletData | null> {
-//     let WalletConnectProvider;
-//     try {
-//         // Dynamically import the WalletConnect provider package.
-//         const module = await import('@walletconnect/web3-provider');
-//         WalletConnectProvider = module.default;
-//     } catch (error) {
-//         console.error('WalletConnectProvider module not found:', error);
-//         return null;
-//     }
+export async function connectWalletConnect() {
+    const allowedWallets = [
+        "MetaMask",
+        "Phantom",
+        "SubWallet",
+        "TrustWallet",
+        "Coinbase Wallet",
+        "Multiversex",
+    ];
 
-//     if (!WalletConnectProvider) {
-//         console.error('WalletConnectProvider is not available.');
-//         return null;
-//     }
+    try {
+        // Initialize the WalletConnect v2 provider with your projectId and desired chains.
+        const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
 
-//     try {
-//         // Create a new WalletConnect provider instance with your Infura ID (or another RPC provider).
-//         const provider = new WalletConnectProvider({
-//             infuraId: 'YOUR_INFURA_ID',
-//         });
-//         // Enable the provider (this will open the QR code modal).
-//         const accounts: string[] = await provider.enable();
-//         return { provider: 'walletconnect', account: accounts[0] };
-//     } catch (error) {
-//         console.error('WalletConnect connection error:', error);
-//         return null;
-//     }
-// }
+        if (!projectId) {
+            throw new Error("Missing Wallet Connect Project Id")
+        }
+
+        const provider = await EthereumProvider.init({ projectId, showQrModal: true, optionalChains: [137, 56] });
+
+        console.log("provider is: ", provider)
+        // Trigger the connection process (this will display a QR code)
+        await provider.enable();
+
+        // Retrieve connected wallet accounts
+        const accounts = provider.accounts;
+        if (!accounts || accounts.length === 0) {
+            throw new Error("No wallet accounts found.");
+        }
+        const walletAddress = accounts[0];
+
+        // Retrieve wallet metadata if available (e.g., wallet name)
+        const walletType = provider.session?.peer?.metadata?.name || "Unknown";
+        // Check if the connected wallet is within our allowed list.
+        if (!allowedWallets.includes(walletType)) {
+            throw new Error(`The connected wallet "${walletType}" is not supported.`);
+        }
+
+        // You can now use walletAddress and walletType in your Dapp.
+        console.log("Connected wallet address:", walletAddress);
+        console.log("Wallet type:", walletType);
+
+        return { walletAddress, walletType };
+    } catch (error) {
+        console.error('WalletConnect connection error:', error);
+        return null;
+    }
+}
 
 /**
  * Connects to SubWallet.

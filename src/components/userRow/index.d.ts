@@ -7,6 +7,6 @@ export interface UserRowProps {
   className?: string;
   badges?: string[];
   bio?: string;
-  wallet: string;
+  id: string;
   username: string;
 }

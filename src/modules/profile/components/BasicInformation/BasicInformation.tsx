@@ -38,7 +38,7 @@ export const BasicInformation: FC<{
   }, [user])
 
   const follow = async () => {
-    await followUser(user.wallet)
+    await followUser(user._id)
     setIsFollowed(!isFollowed)
   }
 

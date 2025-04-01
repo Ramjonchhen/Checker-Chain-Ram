@@ -13,15 +13,11 @@ const ProfileStatsSection = ({ user }: Props) => {
   const router = useRouter()
   return (
     <div className="flex gap-6 flex-wrap justify-center md:justify-start">
-      <FollowPeopleDialog
-        wallet={user?.wallet}
-        type="followers"
-        title="Followers"
-      >
+      <FollowPeopleDialog userId={user?._id} type="followers" title="Followers">
         <Stats bottomText="Followers" value={`${user?.follower ?? 0}`} />
       </FollowPeopleDialog>
       <FollowPeopleDialog
-        wallet={user?.wallet}
+        userId={user?._id}
         type="followings"
         title="Following"
       >

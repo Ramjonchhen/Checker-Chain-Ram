@@ -33,8 +33,8 @@ export const Interested: FC<InterestedProps> = ({ goToNextStep }) => {
       <div className="flex flex-wrap gap-2 my-4 w-full max-h-[290px] overflow-y-scroll overflow-x-auto">
         {recommendedFollowers.map((people: User) => (
           <UserRow
-            key={people.wallet}
-            wallet={people.wallet}
+            key={people._id}
+            id={people._id}
             profileImage={people.profilePicture?.toString() || ""}
             name={people.name}
             description={`${people.level}`}

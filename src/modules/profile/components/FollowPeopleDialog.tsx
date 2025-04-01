@@ -6,11 +6,11 @@ export const FollowPeopleDialog: FC<{
   title: string
   children: ReactNode
   type: "followings" | "followers"
-  wallet: string
-}> = ({ title, children, type, wallet, ...rest }) => {
+  userId: string
+}> = ({ title, children, type, userId, ...rest }) => {
   const [showModal, setShowModal] = useState(false)
   const {
-    wallet: personalWallet,
+    user,
     getFollowers,
     getFollowings,
     followers,
@@ -21,18 +21,18 @@ export const FollowPeopleDialog: FC<{
 
   useEffect(() => {
     if (type === "followers") {
-      getFollowers(wallet)
+      getFollowers(userId)
     }
     if (type === "followings") {
-      getFollowings(wallet)
+      getFollowings(userId)
     }
-  }, [type, getFollowers, getFollowings, authorization, wallet])
+  }, [type, getFollowers, getFollowings, authorization, user])
 
   useEffect(() => {
-    if (wallet) {
+    if (user) {
       setShowModal(false)
     }
-  }, [wallet])
+  }, [user])
 
   return (
     <>
@@ -46,10 +46,10 @@ export const FollowPeopleDialog: FC<{
         display={showModal}
         onHide={() => {
           if (type === "followers") {
-            getFollowers(wallet)
+            getFollowers(userId)
           }
           if (type === "followings") {
-            getFollowings(wallet)
+            getFollowings(userId)
           }
           setShowModal(false)
         }}
@@ -69,7 +69,7 @@ export const FollowPeopleDialog: FC<{
                   <UserRow
                     key={index}
                     profileImage={people.profilePicture?.toString() || ""}
-                    wallet={people.wallet}
+                    id={people._id}
                     name={people.name}
                     description={people.level}
                     followed={people.followed}
@@ -85,7 +85,7 @@ export const FollowPeopleDialog: FC<{
                     key={index}
                     profileImage={people.profilePicture?.toString() || ""}
                     name={people.name}
-                    wallet={people.wallet}
+                    id={people._id}
                     description={people.level}
                     followed={people.followed}
                     username={people.username}
@@ -95,14 +95,14 @@ export const FollowPeopleDialog: FC<{
             {type === "followings" && !followings?.length && (
               <Text className="px-4 text-sm" variant="body">
                 {`${
-                  wallet !== personalWallet ? "User" : "You"
+                  userId !== user?._id ? "User" : "You"
                 } don't have any followings yet.`}
               </Text>
             )}
             {type === "followers" && !followers?.length && (
               <Text className="px-4 text-sm" variant="body">
                 {`${
-                  wallet !== personalWallet ? "User" : "You"
+                  userId !== user?._id ? "User" : "You"
                 } don't have followers yet.`}
               </Text>
             )}

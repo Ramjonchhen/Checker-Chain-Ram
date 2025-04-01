@@ -18,9 +18,6 @@ const ProfilePage: NextPage<{
     (state) => state
   )
 
-  const {
-    wallet: { address }
-  } = useWallet()
   useEffect(() => {
     if (
       user.username !== otherUserMeta.username &&
@@ -28,7 +25,7 @@ const ProfilePage: NextPage<{
     ) {
       fetchOtherProfile(otherUserMeta.username)
     }
-  }, [otherUserMeta, authorization, user, otherUser, address])
+  }, [otherUserMeta, authorization, user, otherUser])
 
   const selectedUserData =
     user.username === otherUserMeta.username ? user : otherUser
