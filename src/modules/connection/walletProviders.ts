@@ -1,5 +1,6 @@
 import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
 import { EthereumProvider } from '@walletconnect/ethereum-provider';
+import { Web3Modal } from '@web3modal/standalone';
 import { supportingWallets } from './ConnectionItem';
 
 let walletConnectProvider: any = null;  // Store provider instance
@@ -133,7 +134,6 @@ const SUPPORTED_WALLETS: supportingWallets[] = [
     "xPortal"
 ];
 
-
 export async function connectWalletConnect() {
     try {
         const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
@@ -142,22 +142,28 @@ export async function connectWalletConnect() {
             throw new Error('WalletConnect project ID is not configured');
         }
 
-        // Initialize with specific modal options
+        // Initialize Web3Modal first
+        const web3Modal = new Web3Modal({
+            projectId,
+            walletConnectVersion: 2,
+            defaultChain: {
+                id: 1,
+                name: 'Ethereum'
+            },
+            themeMode: "light",
+            themeVariables: {
+                "--w3m-z-index": "999999999",
+                "--w3m-background-color": "#ffffff",
+                "--w3m-accent-color": "#000000",
+                "--w3m-background-border-radius": "24px"
+            }
+        });
+
+        // Initialize provider
         const provider = await EthereumProvider.init({
             projectId,
             chains: [1],
-            showQrModal: true,
-            qrModalOptions: {
-                themeMode: "light",
-                themeVariables: {
-                    "--wcm-z-index": "99999",
-                    "--wcm-background-color": "#ffffff",
-                    "--wcm-accent-color": "#000000",
-                },
-                explorerRecommendedWalletIds: "NONE", // Don't filter wallets
-                privacyPolicyUrl: undefined,
-                termsOfServiceUrl: undefined
-            },
+            showQrModal: false, // Disable default QR modal since we're using Web3Modal
             metadata: {
                 name: 'Checker Chain',
                 description: 'Checker Chain Application',
@@ -166,18 +172,24 @@ export async function connectWalletConnect() {
             }
         });
 
-        // Event listeners
-        provider.on('display_uri', (uri: string) => {
+        // Set up event listeners
+        provider.on('display_uri', async (uri: string) => {
             console.log('WalletConnect QR Code URI:', uri);
-            console.log('QR Code Modal Status: Displaying');
-            // Force modal to show
-            if (provider.modal?.openModal) {
-                provider.modal.openModal();
-            }
+            console.log('Opening Web3Modal...');
+            await web3Modal.openModal({
+                uri,
+                standaloneChains: ['eip155:1']
+            });
         });
 
         provider.on('connect', () => {
             console.log('WalletConnect: Connected successfully');
+            web3Modal.closeModal();
+        });
+
+        provider.on('disconnect', () => {
+            console.log('WalletConnect: Disconnected');
+            web3Modal.closeModal();
         });
 
         console.log('WalletConnect: Enabling provider...');
@@ -206,6 +218,7 @@ export async function connectWalletConnect() {
             };
         } catch (accountError) {
             console.error('Error getting accounts:', accountError);
+            web3Modal.closeModal();
             throw new Error('Failed to get wallet accounts');
         }
     } catch (error) {
